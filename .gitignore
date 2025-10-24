@@ -1,0 +1,8 @@
+venv/
+
+# Ignore all files in data/
+data/*
+
+# But keep placeholders (gitkeep/readme)
+!data/**/.gitkeep
+!data/**/README.md
