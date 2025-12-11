@@ -3,3 +3,6 @@ numpy
 plotly
 black
 pylint
+xgboost
+shap
+matplotlib
