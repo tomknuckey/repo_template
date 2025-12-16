@@ -6,3 +6,7 @@ data/*
 # But keep placeholders (gitkeep/readme)
 !data/**/.gitkeep
 !data/**/README.md
+
+__pycache__/
+
+backup/

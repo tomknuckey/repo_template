@@ -6,3 +6,6 @@ pylint
 xgboost
 shap
 matplotlib
+nbformat
+statsmodels
+seaborn
