@@ -9,7 +9,7 @@ election_dates = [
 
 #Initial Model
 features = ["Incumbent_Duration_Days", "GDP_YoY", "Inflation_YoY", "Unemployment Rate", 
-"Incumbent_Labour_election"
+"Incumbent_Labour_election", "Falklands_War_Flag", "Covid_Pandemic_Flag", "majority", 
 ]
 target = "Incumbent_Win"
 

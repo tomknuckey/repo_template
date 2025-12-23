@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from utils.dataprep_utils import (
+    add_event_flag,
     with_date_features,
     prepare_election_date,
     prepare_election_results,
@@ -62,6 +63,40 @@ pdf_economic = pdf_gdp.merge(
     on=["Year", "Quarter"],
 ).merge(pdf_unemployment, how="left", on="Year")
 
-pdf_all = pdf_polling_elections.merge(pdf_economic, how="left", on=["Year", "Quarter"])
+pdf_all = (
+    pdf_polling_elections.merge(pdf_economic, how="left", on=["Year", "Quarter"])
+    .pipe(
+        add_event_flag,
+        start="1982-04-02",
+        end="1982-06-14",
+        flag_name="Falklands_War_Flag",
+    )
+    .pipe(
+        add_event_flag,
+        start="2020-03-01",
+        end="2022-06-01",
+        flag_name="Covid_Pandemic_Flag",
+    )
+)
+
+pdf_all["majority"] = (
+    pdf_all[["Conservative_election", "Labour_election"]].max(axis=1) - 325
+)
+
+
+pdf_all["minority_flag"] = np.where(pdf_all["majority"] < 0, 1, 0)
+
+pdf_all["Next_Election_Date"] = pdf_all["Date"].where(
+    pdf_all["Election_Flag"] == 1
+)
+
+pdf_all["Next_Election_Date"] = (
+    pdf_all["Next_Election_Date"]
+    .bfill()
+)
+
+pdf_all["Days_Until_Next_Election"] = (
+    pdf_all["Next_Election_Date"] - pdf_all["Date"]
+).dt.days
 
 pdf_all.to_csv("data/intermediate/national_data.csv", index=False)

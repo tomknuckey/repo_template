@@ -34,6 +34,8 @@ Maybe other can be found here https://www.electoralcalculus.co.uk/flatfile.html
 
 Election that data says was 1975 was 1974
 
+Unemployment Data is only from 1971, meaning in order to use that we need to either filter things out, get a new data source or something smart
+
     
 2. Research Related Work
 

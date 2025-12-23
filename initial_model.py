@@ -12,7 +12,13 @@ pdf_all = pd.read_csv("data/intermediate/national_data.csv")
 pdf_all = pd.get_dummies(pdf_all, columns=["Incumbent"], drop_first=True, dtype=int)
 
 # Drop rows with missing values in target/features
-pdf_all_filtered = pdf_all[[target] + features].dropna(subset=[target] + features)
+
+print("Date Ranges before and after filtering:")
+print(pdf_all.agg({"Date":["min","max"]}))
+
+pdf_all_filtered = pdf_all[[target] + features + ["Date"]].dropna(subset=[target] + features)
+
+print(pdf_all_filtered.agg({"Date":["min","max"]}))
 
 if scale_mode:
     scaler = MinMaxScaler()

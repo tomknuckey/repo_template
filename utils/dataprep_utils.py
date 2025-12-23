@@ -109,3 +109,18 @@ def prepare_polling():
     pdf_polling["Polling_Flag"] = 1
 
     return pdf_polling
+
+def add_event_flag(
+    pdf: pd.DataFrame,
+    start: str,
+    end: str,
+    flag_name: str,
+) -> pd.DataFrame:
+    """
+    Add a binary event flag column based on a date range.
+    """
+    pdf[flag_name] = (
+        (pdf["Date"] >= pd.Timestamp(start)) &
+        (pdf["Date"] <= pd.Timestamp(end))
+    ).astype(int)
+    return pdf
