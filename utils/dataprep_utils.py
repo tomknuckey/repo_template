@@ -68,11 +68,21 @@ def with_polling_stats(pdf, election_cols):
     Add polling-related stats to the dataframe.
     """
 
+    # Ensure Date column is datetime
+    pdf["Date"] = pd.to_datetime(pdf["Date"])
+
     # Identify incumbent party each day
     pdf["Incumbent"] = pdf[election_cols].idxmax(axis=1)
 
-    # First date each incumbent appears
-    pdf["Incumbent_Start_Date"] = pdf.groupby("Incumbent")["Date"].transform("cummin")
+    # Start date of current incumbent (most recent takeover)
+    # Compute on a date-sorted temporary DF so shift() reflects chronological order,
+    # then align the result back to the original dataframe to preserve row order.
+    tmp = pdf.sort_values("Date").copy()
+    tmp["Incumbent_Change"] = tmp["Incumbent"] != tmp["Incumbent"].shift(1)
+    tmp["Incumbent_Start_Date"] = tmp["Date"].where(tmp["Incumbent_Change"]).ffill()
+    # If Incumbent is missing for a row, ensure start date is NaT
+    tmp.loc[tmp["Incumbent"].isna(), "Incumbent_Start_Date"] = pd.NaT
+    pdf["Incumbent_Start_Date"] = tmp["Incumbent_Start_Date"]
 
     # Duration (days since incumbent started)
     pdf["Incumbent_Duration_Days"] = (pdf["Date"] - pdf["Incumbent_Start_Date"]).dt.days

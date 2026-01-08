@@ -2,7 +2,9 @@ import pandas as pd
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 import seaborn as sns
 import matplotlib.pyplot as plt
-
+from pandas import DataFrame
+from sklearn.tree import DecisionTreeRegressor, plot_tree
+from typing import List
 
 def check_collinearity(X: pd.DataFrame, show_corr_heatmap: bool = True) -> pd.DataFrame:
     """
@@ -39,3 +41,36 @@ def check_collinearity(X: pd.DataFrame, show_corr_heatmap: bool = True) -> pd.Da
         plt.show()
 
     return vif_data
+
+def plot_basic_decision_tree(
+    pdf_train: DataFrame,
+    features: List[str],
+    target: str,
+    max_depth: int = 4,
+):
+    """
+    Trains a DecisionTreeRegressor on the given dataset and plots the resulting tree.
+    This helps to visualize how a basic decision tree model makes predictions based on the features.
+
+    Args:
+        pdf_train (pd.DataFrame): Training dataset containing features and target.
+        features (List[str]): List of feature column names.
+        target (str): Target column name.
+        max_depth (int, optional): Maximum depth of the tree. Defaults to 4.
+        random_state (int, optional): Random seed for reproducibility. Defaults to 42.
+
+    """
+    # Train the model
+    tree_model = DecisionTreeRegressor(max_depth=max_depth, random_state=42)
+    tree_model.fit(pdf_train[features], pdf_train[target])
+
+    # Plot the tree
+    plt.figure(figsize=(24, 16))
+    plot_tree(
+        tree_model,
+        feature_names=features,
+        filled=True,
+        rounded=True,
+        fontsize=10
+    )
+    plt.show()

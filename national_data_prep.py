@@ -58,10 +58,18 @@ pdf_inflation = (
 
 pdf_unemployment = pd.read_csv("data/input/economic/unemployment.csv")
 
+pdf_unemployment["Quarter"] = ((pdf_unemployment["Month"] - 1) // 3) + 1
+
+pdf_unemployment = (
+    pdf_unemployment.groupby(["Year", "Quarter"])
+    .agg({"Unemployment Rate": "mean"})
+    .reset_index()
+)
+
 pdf_economic = pdf_gdp.merge(
     pdf_inflation[["Year", "Quarter", "Inflation_QoQ", "Inflation_YoY"]],
     on=["Year", "Quarter"],
-).merge(pdf_unemployment, how="left", on="Year")
+).merge(pdf_unemployment, how="left", on=["Year", "Quarter"])
 
 pdf_all = (
     pdf_polling_elections.merge(pdf_economic, how="left", on=["Year", "Quarter"])
